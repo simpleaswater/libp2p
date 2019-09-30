@@ -1,0 +1,35 @@
+{
+  "name": "hello-libp2p",
+  "version": "1.0.0",
+  "description": "A starter guide for js-libp2p",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simpleaswater/libp2p.git"
+  },
+  "keywords": [
+    "libp2p",
+    "guide",
+    "beginner",
+    "simpleaswater"
+  ],
+  "author": "Vaibhav Saini (hi@simpleaswater.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simpleaswater/libp2p/issues"
+  },
+  "homepage": "https://github.com/simpleaswater/libp2p#readme",
+  "dependencies": {
+    "@nodeutils/defaults-deep": "^1.1.0",
+    "libp2p": "^0.26.2",
+    "libp2p-mplex": "^0.8.5",
+    "libp2p-secio": "^0.11.1",
+    "libp2p-tcp": "^0.13.2"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.2",
+    "node-emoji": "^1.10.0"
+  }
+}
