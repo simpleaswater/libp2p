@@ -10,15 +10,13 @@ const p = Pushable()
 const chalk = require('chalk');
 const emoji = require('node-emoji')
 
-PeerId.createFromJSON(require('./ids/moonId'), (err, idListener) => {
+PeerId.createFromJSON(require('./ids/moonId'), (err, peerId) => {
     if (err) {
         throw err
     }
-    const peerListener = new PeerInfo(idListener)
-    peerListener.multiaddrs.add('/ip4/0.0.0.0/tcp/10333')
-    const nodeListener = new Node({
-        peerInfo: peerListener
-    })
+    const peerInfo = new PeerInfo(peerId)
+    peerInfo.multiaddrs.add('/ip4/127.0.0.1/tcp/10333')
+    const nodeListener = new Node({ peerInfo })
 
     nodeListener.start((err) => {
         if (err) {
@@ -45,16 +43,16 @@ PeerId.createFromJSON(require('./ids/moonId'), (err, idListener) => {
             )
 
             process.stdin.setEncoding('utf8')
-            var data = `${chalk.blue("Message received from Moon: ")}\n\n` + chunk.toString() + `\n${emoji.get('incoming_envelope')}${chalk.blue("  Send message from Earth:")}`
             process.openStdin().on('data', (chunk) => {
+                var data = `${chalk.blue("Message received from Moon: ")}\n\n` + chunk.toString() + `\n${emoji.get('incoming_envelope')}${chalk.blue("  Send message from Earth:")}`
                 p.push(data)
             })
         })
 
         console.log(emoji.get('moon'), chalk.blue(' Moon ready '), emoji.get('headphones'), chalk.blue(' Listening on: '));
 
-        peerListener.multiaddrs.forEach((ma) => {
-            console.log(ma.toString() + '/p2p/' + idListener.toB58String())
+        peerInfo.multiaddrs.forEach((ma) => {
+            console.log(ma.toString() + '/p2p/' + peerId.toB58String())
         })
 
         console.log('\n' + emoji.get('moon'), chalk.blue(' Moon trying to connect with Earth '), emoji.get('large_blue_circle'));

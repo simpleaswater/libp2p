@@ -10,36 +10,34 @@ const chalk = require('chalk');
 const emoji = require('node-emoji')
 const Pushable = require('pull-pushable')
 const p = Pushable()
-let idListener
+let moonPeerId
 
 async.parallel([
     (callback) => {
-        PeerId.createFromJSON(require('./ids/earthId'), (err, idDialer) => {
+        PeerId.createFromJSON(require('./ids/earthId'), (err, earthPeerId) => {
             if (err) {
                 throw err
             }
-            callback(null, idDialer)
+            callback(null, earthPeerId)
         })
     },
     (callback) => {
-        PeerId.createFromJSON(require('./ids/moonId'), (err, idListener) => {
+        PeerId.createFromJSON(require('./ids/moonId'), (err, moonPeerId) => {
             if (err) {
                 throw err
             }
-            callback(null, idListener)
+            callback(null, moonPeerId)
         })
     }
 ], (err, ids) => {
     if (err) throw err
-    const peerDialer = new PeerInfo(ids[0])
-    peerDialer.multiaddrs.add('/ip4/0.0.0.0/tcp/0')
-    const nodeDialer = new Node({
-        peerInfo: peerDialer
-    })
+    const earthPeerInfo = new PeerInfo(ids[0])
+    earthPeerInfo.multiaddrs.add('/ip4/127.0.0.1/tcp/0')
+    const nodeDialer = new Node({ peerInfo: earthPeerInfo })
 
-    const peerListener = new PeerInfo(ids[1])
-    idListener = ids[1]
-    peerListener.multiaddrs.add('/ip4/127.0.0.1/tcp/10333')
+    const moonPeerInfo = new PeerInfo(ids[1])
+    moonPeerId = ids[1]
+    moonPeerInfo.multiaddrs.add('/ip4/127.0.0.1/tcp/10333')
     nodeDialer.start((err) => {
         if (err) {
             throw err
@@ -47,11 +45,7 @@ async.parallel([
 
         console.log(emoji.get('large_blue_circle'), chalk.blue(' Earth Ready '), emoji.get('headphones'), chalk.blue(' Listening on: '));
 
-        peerListener.multiaddrs.forEach((ma) => {
-            console.log(ma.toString() + '/p2p/' + idListener.toB58String())
-        })
-
-        nodeDialer.dialProtocol(peerListener, '/chat/1.0.0', (err, conn) => {
+        nodeDialer.dialProtocol(moonPeerInfo, '/chat/1.0.0', (err, conn) => {
             if (err) {
                 throw err
             }
